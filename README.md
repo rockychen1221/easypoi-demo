@@ -29,7 +29,7 @@ Easypoi 功能如同名字easy，主打的功能就是容易，让一个没接�
 
 ## 1. Excel实例
 **一般模板导出**
-测试类:`src/main/java/com/datadriver/easypoi/excel/ExcelTest.java`
+测试类:`src/main/java/com/littlefox/easypoi/excel/ExcelTest.java`
 
 - 导出单个sheet页 (singlesheet.xls)
 - 导出多个Sheet页 (multisheet.xls)
@@ -39,18 +39,18 @@ Easypoi 功能如同名字easy，主打的功能就是容易，让一个没接�
 - 横向、纵向、换行导出 (horizontal.xlsx)
 
 **复杂导出**
-测试类:`src/main/java/com/datadriver/easypoi/excel/FinanceTest.java`
+测试类:`src/main/java/com/littlefox/easypoi/excel/FinanceTest.java`
 
 - 类似“财务报表-资产负债表”，模板为`src/main/resources/excel/finance.xlsx`
 - Java实现自定义动态表头导出，无模板，数据格式为map
 
 **导入**
-测试类:`src/test/java/com/datadriver/easypoi/ImportTest`
+测试类:`src/test/java/com/littlefox/easypoi/ImportTest`
 
 - 读取指定xls文件导入，读取的数据结果分别通过实体类注解和map映射
 
 ## 2. Word实例
-测试类:`src/main/java/com/datadriver/easypoi/excel/WordTest`
+测试类:`src/main/java/com/littlefox/easypoi/excel/WordTest`
 - 导出单个对象
 - 导出List Map对象
 - 导出图片文件
