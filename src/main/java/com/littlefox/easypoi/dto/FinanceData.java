@@ -11,7 +11,7 @@ import java.util.stream.IntStream;
  * @version 1.0
  * @date 2020-06-15 10:11
  */
-public class Finance {
+public class FinanceData {
     /**
      * 资产负债科目
      */
@@ -132,10 +132,17 @@ public class Finance {
      */
     public static Map<String, Object> financeModel(int years) {
 
-        HashMap<String, Object> map = new LinkedHashMap<String, Object>(2);
+        HashMap<String, Object> map = new LinkedHashMap<String, Object>();
+
+        List<Map<String, Object>> subjectList = new ArrayList();
         AtomicInteger index = new AtomicInteger(1);
-        Arrays.asList(Finance.assetSubject.split(",")).stream().forEach(i -> {
+        Arrays.asList(FinanceData.assetSubject.split(",")).stream().forEach(i -> {
             List yearList = new ArrayList();
+
+//            Map<String, Object> subjectMap = new LinkedHashMap<String, Object>();
+//            subjectMap.put("subject", i);
+//            subjectList.add(subjectMap);
+
             IntStream.range(0, years).forEach(k -> {
                 HashMap<String, Object> dataMap = new LinkedHashMap<String, Object>(2);
                 dataMap.put("begin", String.valueOf((Math.random() * 9 + 1) * 100000));
@@ -160,9 +167,9 @@ public class Finance {
             titleLists.add(title);
 
         });
-
         map.put("yearList", yearLists);
         map.put("titleList", titleLists);
+        //map.put("subject", subjectList);
         return map;
     }
 
@@ -176,7 +183,7 @@ public class Finance {
         if (years < 1) {
             throw new IllegalArgumentException("非法参数");
         }
-        return Arrays.asList(Finance.assetSubject.split(",")).stream().map(i -> {
+        return Arrays.asList(FinanceData.assetSubject.split(",")).stream().map(i -> {
             //单个对象
             HashMap<String, Object> map = new LinkedHashMap<String, Object>();
             map.put("subject", i);

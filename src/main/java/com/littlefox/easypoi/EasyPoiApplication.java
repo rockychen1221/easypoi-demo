@@ -1,6 +1,6 @@
 package com.littlefox.easypoi;
 
-
+import com.littlefox.easypoi.csv.CsvTest;
 import com.littlefox.easypoi.excel.ExcelTest;
 import com.littlefox.easypoi.excel.FinanceTest;
 import com.littlefox.easypoi.word.WordTest;
@@ -9,9 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.time.Duration;
-import java.time.Instant;
 
 @SpringBootApplication
 public class EasyPoiApplication implements CommandLineRunner {
@@ -22,6 +19,8 @@ public class EasyPoiApplication implements CommandLineRunner {
     private int fakseDataSize;//假数据大小
     @Value("${type:10}")
     private String type;//导出类型
+    @Value("${y:3}")
+    private int year;//财务年度数据
 
     private final static String E_XLS = ".xls";
     private final static String E_XLSX = ".xlsx";
@@ -33,7 +32,6 @@ public class EasyPoiApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Instant start = Instant.now();
         printlnParam();
         String templateFile;
         if (StringUtils.isBlank(type)) {
@@ -57,7 +55,7 @@ public class EasyPoiApplication implements CommandLineRunner {
                     ExcelTest.exportMultiSheet(exportPath, templateFile, fakseDataSize, E_XLSX);
                     break;
                 case "14":
-                    templateFile = "excel/horizontalmultisheet.xlsx";
+                    templateFile = "excel/horizontal.xlsx";
                     ExcelTest.exportMultiSheet(exportPath, templateFile, fakseDataSize, E_XLSX);
                     break;
                 case "20":
@@ -66,17 +64,18 @@ public class EasyPoiApplication implements CommandLineRunner {
                     break;
                 case "30":
                     templateFile = "excel/finance.xlsx";
-                    FinanceTest.exportFinanceByTemplate(exportPath, templateFile, E_XLSX,3);
+                    FinanceTest.exportFinanceByTemplate(exportPath, templateFile, E_XLSX, year);
                     break;
                 case "40":
-                    FinanceTest.exportDynaColFinance(3);
+                    FinanceTest.exportDynaColFinance(exportPath,year);
+                    break;
+                case "50":
+                    CsvTest.exportCsv(exportPath,year);
                     break;
                 default:
                     break;
             }
         }
-        Instant end = Instant.now();
-        System.err.println("共耗时: " + Duration.between(start, end).toMillis() / 1000 + " 秒");
     }
 
     private void printlnParam() {
@@ -85,6 +84,7 @@ public class EasyPoiApplication implements CommandLineRunner {
         System.err.println("exportPath=" + exportPath);
         System.err.println("type=" + type);
         System.err.println("fakseDataSize=" + fakseDataSize);
+        System.err.println("year=" + year);
         System.err.println("++++++++++++++++++++++++++++++++++++++++++++++++++");
     }
 }

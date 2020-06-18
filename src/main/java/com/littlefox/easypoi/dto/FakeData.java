@@ -1,7 +1,9 @@
 package com.littlefox.easypoi.dto;
 
+import cn.afterturn.easypoi.entity.ImageEntity;
+
+import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 制作假数据
@@ -9,6 +11,8 @@ import java.util.stream.Collectors;
  * @author Delei
  */
 public class FakeData {
+
+    private static String[] imgs = new String[]{"ali.png", "baidu.png", "lemur.png", "one.png"};
 
     /**
      * 单个对象
@@ -31,19 +35,26 @@ public class FakeData {
      * @param fakeDataSize
      * @return
      */
-    public static List<Map<String, String>> fakeListModel(int fakeDataSize) {
-        List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+    public static List<Map<String, Object>> fakeListModel(int fakeDataSize) {
+        List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
         //List数据
-        HashMap<String, String> tempMap;
         for (int i = 0; i < fakeDataSize; i++) {
-            tempMap = new HashMap<String, String>(6);
+            HashMap<String, Object> tempMap = new HashMap<String, Object>(7);
             tempMap.put("id", (121 + i * 10) + "");
-            tempMap.put("user",  "张三"+i);
-            tempMap.put("year", (1200 + i * 10) + "");
+            tempMap.put("user", "张三" + i);
+            tempMap.put("year", LocalDate.now());
             tempMap.put("income", "1000" + i);
             tempMap.put("lastYearIncome", "2000" + i);
             tempMap.put("cost", "3000" + i);
             tempMap.put("lastYearCost", "4000" + i);
+
+            int index = new Random().nextInt(4);
+            ImageEntity image = new ImageEntity();
+            image.setHeight(200);
+            image.setWidth(500);
+            image.setUrl("imgs/"+imgs[index]);
+            image.setType(ImageEntity.URL);
+            tempMap.put("imgs", image);
             data.add(tempMap);
         }
         return data;

@@ -1,18 +1,15 @@
-package com.littlefox.easypoi.excel;
 
+package com.littlefox.easypoi.excel;
 
 import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.TemplateExportParams;
 import com.littlefox.easypoi.dto.FakeData;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.util.StopWatch;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 /**
  * Excel测试类
@@ -23,7 +20,7 @@ public class ExcelTest {
     public final static String TEMPLATE_EXPORT_NAME = "_export_result";
 
     /**
-     * 导出单个Sheet页
+     * 导出单个Sheet页（包含单个对象、列表、图片）
      *
      * @param exportPath
      * @param templateFile
@@ -39,13 +36,13 @@ public class ExcelTest {
             return;
         }
         Map<String, Object> map = FakeData.fakeModel();
-        List<Map<String, String>> listMap = FakeData.fakeListModel(fakeDataSize);
+        List<Map<String, Object>> listMap = FakeData.fakeListModel(fakeDataSize);
         map.put("listMap", listMap);
         exportExcel(exportPath, templateFile, exportFileType, map);
     }
 
     /**
-     * 导出多个Sheet页
+     * 导出多个Sheet页（包含单个对象、列表、图片）
      *
      * @param exportPath
      * @param templateFile
@@ -61,7 +58,7 @@ public class ExcelTest {
             return;
         }
         Map<String, Object> map = FakeData.fakeModel();
-        List<Map<String, String>> listMap = FakeData.fakeListModel(fakeDataSize);
+        List<Map<String, Object>> listMap = FakeData.fakeListModel(fakeDataSize);
         map.put("listMap", listMap);
         listMap = FakeData.fakeListModel(fakeDataSize);
         map.put("listMap1", listMap);
@@ -69,41 +66,35 @@ public class ExcelTest {
     }
 
     private static void exportExcel(String exportPath, String templateFile, String exportFileType, Map listMap) {
-        FileOutputStream fos = null;
-        try {
-            TemplateExportParams templateExportParams = new TemplateExportParams(  "/" + templateFile, true);
-            //横向遍历
-            templateExportParams.setColForEach(true);
-            templateFile = templateFile.substring(0,templateFile.lastIndexOf("."));
-            String exportName = templateFile+ TEMPLATE_EXPORT_NAME + exportFileType;
-            File exportFile = new File(exportPath + "/" + exportName);
-            Workbook workbook = ExcelExportUtil.exportExcel(templateExportParams, listMap);
-            //ExcelExportUtil.exportBigExcel(templateExportParams, listMap)
+        TemplateExportParams templateExportParams = new TemplateExportParams("/" + templateFile, true);
+        //横向遍历
+        templateExportParams.setColForEach(true);
 
-            fos = new FileOutputStream(exportFile);
-            workbook.write(fos);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            //关闭输出流
-            closeQuietly(fos);
+        String tempFile = templateFile.substring(0, templateFile.lastIndexOf("."));
+        String exportName = tempFile + TEMPLATE_EXPORT_NAME + exportFileType;
+        File exportFile = new File(exportPath + "/" + exportName.split("/")[0]);
+        if (!exportFile.exists()) {
+            exportFile.mkdirs();
         }
-    }
 
-    /**
-     * 关闭输出流
-     *
-     * @param closeable
-     */
-    private static void closeQuietly(Closeable closeable) {
-        try {
-            if (closeable != null) {
-                closeable.close();
-            }
+        //System.err.println(JSON.toJSONString(listMap));
+
+        StopWatch stopWatch= new StopWatch(templateFile);
+        stopWatch.start(templateFile);
+        try (
+                FileOutputStream fos = new FileOutputStream(exportPath + "/" + exportName);
+        ) {
+            Workbook workbook = ExcelExportUtil.exportExcel(templateExportParams, listMap);
+            workbook.write(fos);
+            workbook.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        stopWatch.stop();
+        System.err.println(stopWatch.prettyPrint());
+        System.err.println(stopWatch.getTotalTimeSeconds());
     }
 
 }
