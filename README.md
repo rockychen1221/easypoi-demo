@@ -48,6 +48,8 @@ Easypoi 功能如同名字easy，主打的功能就是容易，让一个没接�
 测试类:`src/test/java/com/littlefox/easypoi/ImportTest`
 
 - 读取指定xls文件导入，读取的数据结果分别通过实体类注解和map映射
+- 支持Excel列名相同
+
 
 ## 2. Word实例
 测试类:`src/main/java/com/littlefox/easypoi/excel/WordTest`
@@ -100,7 +102,7 @@ java -jar easypoi-example.jar
 * Excel自适应xls和xlsx两种格式,word只支持2007及其以上的版本（即docx模式），不支持内嵌表格操作
 * 不支持List嵌套循环，详见[issues](https://gitee.com/lemur/easypoi/issues/IB120?from=project-issue) ，不支持没有key遍历，如`"list":[1,2,3]`，正确应该为`"list":[{key1:1},{key2:2},{key3:3}]`
 * 关于`]]`换行符，实测只能换3行，详见[issues](https://gitee.com/lemur/easypoi/issues/I1FQRM?from=project-issue#note_2702976)
-* 关于map导入存在逻辑错误，详见[issues](https://gitee.com/lemur/easypoi/issues/I1L3GI?from=project-issue)
+* 关于map导入表头key存在逻辑错误，详见[issues](https://gitee.com/lemur/easypoi/issues/I1L3GI?from=project-issue)
 * POI提供了HSSF、XSSF以及SXSSF三种方式操作Excel。
   - HSSF：Excel97-2003版本，扩展名为.xls。一个sheet最大行数65536，最大列数256。
   - XSSF：Excel2007版本开始，扩展名为.xlsx。一个sheet最大行数1048576，最大列数16384。
