@@ -7,6 +7,7 @@ import com.littlefox.easypoi.model.AssetsLiabilities;
 import com.littlefox.easypoi.model.CashFlow;
 import com.littlefox.easypoi.model.FinanceModel;
 import com.littlefox.easypoi.model.Profit;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.util.StopWatch;
 
@@ -70,7 +71,7 @@ public class ImportTest {
      * 导入方式为转成实体（存在相同列名的情况）多sheet
      */
     @Test
-    public void importTestExcelByFinance() {
+    public void importTestExcelByFinanceBean() {
         List listAll = new ArrayList();
         List list = Collections.emptyList();
         for (int i = 0; i < 3; i++) {
@@ -81,6 +82,33 @@ public class ImportTest {
             File file = new File(FileUtilTest.getWebRootPath("import/财务报表导入模版 (一般企业版)测试.xlsx"));
             try {
                 list = ExcelImportUtil.importExcel(file, i == 0 ? AssetsLiabilities.class : i == 1 ? Profit.class : CashFlow.class, importParams);
+                listAll.add(list);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        System.err.println(JSON.toJSONString(listAll));
+    }
+
+    /**
+     * 导入方式为转成Map
+     * 存在相同列名的情况会导致map数据丢失，原因key重复
+     * 多sheet
+     */
+    @Test
+    public void importTestExcelByFinanceMap() {
+        List listAll = new ArrayList();
+        List list = Collections.emptyList();
+        for (int i = 0; i < 3; i++) {
+            ImportParams importParams = new ImportParams();
+            importParams.setTitleRows(3);
+            importParams.setHeadRows(1);
+            importParams.setStartSheetIndex(i);
+            importParams.setKeyIndex(null);//设置读取空值
+
+            File file = new File(FileUtilTest.getWebRootPath("import/财务报表导入模版 (一般企业版)测试.xlsx"));
+            try {
+                list = ExcelImportUtil.importExcel(file, Map.class, importParams);
                 listAll.add(list);
             } catch (Exception e) {
                 e.printStackTrace();
