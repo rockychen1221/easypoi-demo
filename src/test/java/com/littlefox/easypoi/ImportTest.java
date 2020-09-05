@@ -3,11 +3,8 @@ package com.littlefox.easypoi;
 import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
 import com.alibaba.fastjson.JSON;
-import com.littlefox.easypoi.model.AssetsLiabilities;
-import com.littlefox.easypoi.model.CashFlow;
-import com.littlefox.easypoi.model.FinanceModel;
-import com.littlefox.easypoi.model.Profit;
-import org.junit.Assert;
+import com.littlefox.easypoi.model.*;
+import org.apache.commons.compress.utils.Lists;
 import org.junit.Test;
 import org.springframework.util.StopWatch;
 
@@ -116,5 +113,78 @@ public class ImportTest {
         }
         System.err.println(JSON.toJSONString(listAll));
     }
+
+
+    /**
+     * 导入方式为转成Map
+     * 存在相同列名的情况会导致map数据丢失，原因key重复
+     * 多sheet
+     */
+    @Test
+    public void importTestExcelByFinanceKaoQinMap() {
+        List<Map<String, Object>> list = Collections.emptyList();
+
+        ImportParams importParams = new ImportParams();
+        importParams.setTitleRows(4);
+        importParams.setHeadRows(2);
+        importParams.setStartRows(1);
+        importParams.setKeyIndex(null);//设置读取空值
+
+        File file = new File(FileUtilTest.getWebRootPath("import/2020-8月-少量数据.xls"));
+        try {
+            list = ExcelImportUtil.importExcel(file, Map.class, importParams);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.err.println(JSON.toJSONString(list));
+    }
+
+
+    /**
+     * 导入方式为实体类注解映射
+     */
+    @Test
+    public void importTestExcelByKaoQinPojo() {
+        ImportParams importParams = new ImportParams();
+        importParams.setTitleRows(4);
+        importParams.setHeadRows(0);
+        importParams.setKeyIndex(null);//设置读取空值
+        File file = new File(FileUtilTest.getWebRootPath("import/2020-8月-少量数据.xls"));
+        try {
+            List<KaoQin> list = ExcelImportUtil.importExcel(file,
+                    KaoQin.class, importParams);
+            List<MyKaoQin> lists = toData(list);
+            System.out.println(JSON.toJSONString(list));
+            System.out.println(JSON.toJSONString(lists));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private List toData(List<KaoQin> list) {
+        List<MyKaoQin> lists= Lists.newArrayList();
+        MyKaoQin myKaoQin = null;
+        for (int i = 0; i < list.size(); i++) {
+            KaoQin kaoQin = list.get(i);
+            if (kaoQin != null) {
+                if (kaoQin.getD1() != null) {
+                    if (kaoQin.getD1().indexOf("工号") > -1) {
+                        myKaoQin = new MyKaoQin();
+                        myKaoQin.setNumber(kaoQin.getD3());
+                        myKaoQin.setName(kaoQin.getD11());
+                        myKaoQin.setDept(kaoQin.getD18());
+                        //i++;
+                        lists.add(myKaoQin);
+                        continue;
+                    }
+                }
+                myKaoQin.add(kaoQin);
+            }
+        }
+        return lists;
+    }
+
 
 }
