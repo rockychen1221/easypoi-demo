@@ -171,6 +171,7 @@ public class ImportTest {
             if (kaoQin != null) {
                 if (kaoQin.getD1() != null) {
                     if (kaoQin.getD1().indexOf("工号") > -1) {
+                        // myKaoQin.
                         myKaoQin = new MyKaoQin();
                         myKaoQin.setNumber(kaoQin.getD3());
                         myKaoQin.setName(kaoQin.getD11());

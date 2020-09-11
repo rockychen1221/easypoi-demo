@@ -16,6 +16,10 @@ public class MyKaoQin {
 
     private String dept;
 
+    private String first;
+
+    private String last;
+
     private List<KaoQin> list = new ArrayList<>();
 
     public String getNumber() {
@@ -54,6 +58,16 @@ public class MyKaoQin {
     public void add(KaoQin kaoQin){
         list.add(kaoQin);
     }
+
+//
+//    public MyKaoQin(Collection<KaoQin> txs) {
+//        if (txs.size() < 2) {
+//            throw new IllegalArgumentException(
+//                    "Must have at least two transactions");
+//        }
+//        details = txs.stream().collect(KaoQin.collector());
+//        details.validate();
+//    }
 
     @Override
     public String toString() {

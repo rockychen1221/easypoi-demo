@@ -2,6 +2,9 @@ package com.littlefox.easypoi.model;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
 
+import java.time.LocalDate;
+import java.util.stream.Collector;
+
 /**
  * @author rockychen
  * @version 1.0
@@ -235,4 +238,34 @@ public class KaoQin {
                 ", d20='" + d20 + '\'' +
                 '}';
     }
+
+//    public static Collector<KaoQin> collector() {
+//        return Collector.of(
+//                KaoQin::new,
+//                KaoQin::accumulate,
+//                KaoQin::combine,
+//                Collector.Characteristics.IDENTITY_FINISH,
+//                Collector.Characteristics.UNORDERED);
+//    }
+//
+//    LocalDate start;
+//    LocalDate end;
+//    double minAmount = Double.POSITIVE_INFINITY;
+//    double maxAmount = Double.NEGATIVE_INFINITY;
+//
+//    public void accumulate(final KaoQin tx) {
+//        start = start != null && start.isBefore(tx.when) ? start : tx.when;
+//        end = end != null && end.isAfter(tx.when) ? end : tx.when;
+//        minAmount = Math.min(minAmount, tx.amount);
+//        maxAmount = Math.max(maxAmount, tx.amount);
+//
+//    }
+//
+//    public KaoQin combine(final KaoQin other) {
+//        start = start.isBefore(other.start) ? start : other.start;
+//        end = end.isAfter(other.end) ? end : other.end;
+//        minAmount = Math.min(minAmount, other.minAmount);
+//        maxAmount = Math.max(maxAmount, other.maxAmount);
+//        return this;
+//    }
 }
