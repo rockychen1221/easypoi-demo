@@ -1,6 +1,8 @@
 package com.littlefox.easypoi.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 
@@ -11,21 +13,22 @@ import java.time.format.DateTimeFormatterBuilder;
  */
 public class Details {
 
-    final LocalDateTime when;
+    final LocalDate date;
+    final LocalTime time;
 
-    public Details(LocalDateTime when) {
-        this.when = when;
-    }
-
-    public Details(String when) {
+    public Details(String date, String time ) {
         DateTimeFormatter fmt = new DateTimeFormatterBuilder()
-                .appendPattern("yyyy-MM-dd HH:mm")
-                //.parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
+                .appendPattern("HH:mm")
                 .toFormatter();
-        this.when = LocalDateTime.parse(when,fmt);
+        this.date = LocalDate.parse(date);
+        this.time = LocalTime.parse(time,fmt);
     }
 
-    public LocalDateTime getWhen() {
-        return when;
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public LocalTime getTime() {
+        return time;
     }
 }

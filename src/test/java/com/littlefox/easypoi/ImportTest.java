@@ -176,7 +176,6 @@ public class ImportTest {
         }
     }
 
-
     private List toData(List<KaoQin> list) {
         List<MyKaoQin> lists = Lists.newArrayList();
         MyKaoQin myKaoQin = null;
@@ -202,7 +201,7 @@ public class ImportTest {
     }
 
     private static List<Details> convert(List<KaoQin> StudentGrandList)
-            throws IllegalAccessException, InvocationTargetException {
+            throws IllegalAccessException {
         //取得StudentGrand的属性，当然你也可以用list = {"id", "name", ...}
         Field[] declaredFields = KaoQin.class.getDeclaredFields();
         List<Details> details = new ArrayList<Details>();
@@ -218,13 +217,13 @@ public class ImportTest {
                     KaoQin StudentGrand = StudentGrandList.get(i);
                     String val = String.valueOf(field.get(StudentGrand));//grand为int会报错
                     if (StringUtils.equals("null", val) && i - 1 == 0) {
-                        details.add(new Details("2020-08-" + (day.length() < 2 ? "0" + day : day) + " 00:00"));
+                        details.add(new Details("2020-08-" + (day.length() < 2 ? "0" + day : day) , "00:00"));
                         break;
                     }
                     String[] arr = val.split("\n");
                     Arrays.stream(arr).forEach(a -> {
                         if (StringUtils.isNotBlank(a) && !StringUtils.equals("null", a)) {
-                            details.add(new Details("2020-08-" + (day.length() < 2 ? "0" + day : day) + " " + a));
+                            details.add(new Details("2020-08-" + (day.length() < 2 ? "0" + day : day) ,  a));
                         }
                     });
                 }
@@ -237,9 +236,8 @@ public class ImportTest {
     private static void print(List<Details> convertedTable) {
         //String json = JSONArray.formObject(convertedTable).toString();
         convertedTable.forEach(d -> {
-            System.out.println(d.getWhen());
+            System.out.println(d.getDate()+"=="+d.getTime());
         });
     }
-
 
 }
