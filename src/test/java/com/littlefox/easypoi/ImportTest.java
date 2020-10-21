@@ -5,10 +5,13 @@ import cn.afterturn.easypoi.excel.entity.ImportParams;
 import com.alibaba.fastjson.JSON;
 import com.littlefox.easypoi.model.*;
 import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.util.StopWatch;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -149,14 +152,25 @@ public class ImportTest {
         ImportParams importParams = new ImportParams();
         importParams.setTitleRows(4);
         importParams.setHeadRows(0);
-        importParams.setKeyIndex(null);//设置读取空值
+        //importParams.setKeyIndex(null);//设置读取空值
         File file = new File(FileUtilTest.getWebRootPath("import/2020-8月-少量数据.xls"));
         try {
             List<KaoQin> list = ExcelImportUtil.importExcel(file,
                     KaoQin.class, importParams);
+
             List<MyKaoQin> lists = toData(list);
-            System.out.println(JSON.toJSONString(list));
-            System.out.println(JSON.toJSONString(lists));
+            //System.out.println(JSON.toJSONString(list));
+            //System.out.println(JSON.toJSONString(lists));
+
+            //实现行转列的算法
+            List<Details> convertedTable = convert(lists.get(8).getList());
+            //打印转换后的集合，查看结果
+
+            //print(convertedTable);
+            XirrDetails details = convertedTable.stream().collect(XirrDetails.collector());
+            System.out.println(details.getStart());
+            System.out.println(details.getEnd());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -164,7 +178,7 @@ public class ImportTest {
 
 
     private List toData(List<KaoQin> list) {
-        List<MyKaoQin> lists= Lists.newArrayList();
+        List<MyKaoQin> lists = Lists.newArrayList();
         MyKaoQin myKaoQin = null;
         for (int i = 0; i < list.size(); i++) {
             KaoQin kaoQin = list.get(i);
@@ -185,6 +199,46 @@ public class ImportTest {
             }
         }
         return lists;
+    }
+
+    private static List<Details> convert(List<KaoQin> StudentGrandList)
+            throws IllegalAccessException, InvocationTargetException {
+        //取得StudentGrand的属性，当然你也可以用list = {"id", "name", ...}
+        Field[] declaredFields = KaoQin.class.getDeclaredFields();
+        List<Details> details = new ArrayList<Details>();
+
+        //多少个属性表示多少行，遍历行
+        for (Field field : declaredFields) {
+            field.setAccessible(true);
+            //list<T>多少个StudentGrand实体类表示有多少列，遍历列
+            String day = field.get(StudentGrandList.get(0)).toString();
+            for (int i = 0, size = StudentGrandList.size(); i < size; i++) {
+                //所以新table的第一列要设置为字段名
+                if (i != 0) {
+                    KaoQin StudentGrand = StudentGrandList.get(i);
+                    String val = String.valueOf(field.get(StudentGrand));//grand为int会报错
+                    if (StringUtils.equals("null", val) && i - 1 == 0) {
+                        details.add(new Details("2020-08-" + (day.length() < 2 ? "0" + day : day) + " 00:00"));
+                        break;
+                    }
+                    String[] arr = val.split("\n");
+                    Arrays.stream(arr).forEach(a -> {
+                        if (StringUtils.isNotBlank(a) && !StringUtils.equals("null", a)) {
+                            details.add(new Details("2020-08-" + (day.length() < 2 ? "0" + day : day) + " " + a));
+                        }
+                    });
+                }
+            }
+        }
+        return details;
+    }
+
+    //打印查看结果
+    private static void print(List<Details> convertedTable) {
+        //String json = JSONArray.formObject(convertedTable).toString();
+        convertedTable.forEach(d -> {
+            System.out.println(d.getWhen());
+        });
     }
 
 
